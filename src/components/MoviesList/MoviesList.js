@@ -1,19 +1,24 @@
 import React, { Component } from "react";
-import MoviesListItem from "../MoviesListItem";
+import MoviesListItem from "../MoviesListItem/MoviesListItem";
+import { List } from "antd"; // Импортируем List из antd
 
 class MoviesList extends Component {
     render() {
         const { movies } = this.props;
         return (
-            <ul>
-                {movies.map(({ id, title, poster_path }) => (
-                    <MoviesListItem
-                        key={id}
-                        title={title}
-                        posterPath={poster_path}
-                    />
-                ))}
-            </ul>
+            <List
+                grid={{ gutter: 16, column: 4 }}
+                dataSource={movies}
+                renderItem={movie => (
+                    <List.Item>
+                        <MoviesListItem
+                            key={movie.id}
+                            title={movie.title}
+                            posterPath={movie.poster_path}
+                        />
+                    </List.Item>
+                )}
+            />
         );
     }
 }

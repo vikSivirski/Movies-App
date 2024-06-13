@@ -1,18 +1,17 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import { Card } from 'antd';
 
 class MoviesListItem extends Component {
     render() {
-      const { title, posterPath } = this.props;
-      return (
-        <li>
-          <img 
-            src={`https://image.tmdb.org/t/p/w500${posterPath}`} 
-            alt={`${title} poster`} 
-            style={{ width: '100px', marginRight: '10px' }}
-          />
-          {title}
-        </li>
-      );
+        const { title, posterPath } = this.props;
+        return (
+            <Card
+                hoverable
+                cover={<img alt={`${title} poster`} src={`https://image.tmdb.org/t/p/w500${posterPath}`} />}
+            >
+                <Card.Meta title={title} />
+            </Card>
+        );
     }
 }
 
