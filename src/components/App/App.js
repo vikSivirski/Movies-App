@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import MoviesList from '../MoviesList';
-import { Spin } from 'antd'; // Импортируем Spin для загрузки
+import { Spin } from 'antd'; 
 
 class App extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class App extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <Spin size="large" style={{ display: 'block', margin: 'auto' }} />; // Используем Spin вместо простого текста
+      return <Spin size="large" style={{ display: 'block', margin: 'auto' }} />; 
     }
 
     return (

@@ -15,6 +15,7 @@ class MoviesList extends Component {
                             key={movie.id}
                             title={movie.title}
                             posterPath={movie.poster_path}
+                            description={movie.overview}
                         />
                     </List.Item>
                 )}
