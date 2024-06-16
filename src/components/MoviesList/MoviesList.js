@@ -7,7 +7,7 @@ class MoviesList extends Component {
         const { movies } = this.props;
         return (
             <List
-                grid={{ gutter: 16, column: 4 }}
+                grid={{ gutter: 16, column: 2 }}
                 dataSource={movies}
                 renderItem={movie => (
                     <List.Item>
@@ -16,6 +16,7 @@ class MoviesList extends Component {
                             title={movie.title}
                             posterPath={movie.poster_path}
                             description={movie.overview}
+                            releaseDate={movie.release_date}
                         />
                     </List.Item>
                 )}

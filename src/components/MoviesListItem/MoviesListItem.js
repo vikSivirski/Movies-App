@@ -1,15 +1,29 @@
 import React, { Component } from "react";
 import { Card, Row, Col, } from 'antd';
 import 'antd/dist/antd';
+import { format } from 'date-fns'; 
+
+import './MoviesListItem.css'
 
 class MoviesListItem extends Component {
+    truncateText = (text, maxLength) => {
+        if (text.length <= maxLength) return text;
+        const truncatedText = text.substring(0, maxLength);
+        const lastSpaceIndex = truncatedText.lastIndexOf(' ');
+        if (lastSpaceIndex === -1) return truncatedText + '...';
+        return truncatedText.substring(0, lastSpaceIndex) + '...';
+    };
+
     render() {
-        const { title, posterPath, description } = this.props;
+        const { title, posterPath, description, releaseDate } = this.props;
+        const truncatedDescription = this.truncateText(description, 250)
+
         return (
             <Card
             hoverable
-            style={{ marginBottom: 20, borderRadius: 0 }} // Убираем border-radius у карточки
-            bodyStyle={{ padding: 0 }} // Убираем внутренние отступы у карточки
+            className="card-container"
+            style={{ marginBottom: 20, borderRadius: 0 }}
+            bodyStyle={{ padding: 0 }} 
         >
                 <Row>
                     <Col span={8}>
@@ -20,8 +34,8 @@ class MoviesListItem extends Component {
                         />
                     </Col>
                     <Col span={16} style={{ paddingLeft: 20 }}>
-                        <h2>{title}</h2>
-                        <p>{description}</p>
+                        <h2 className="film-title">{title}</h2>
+                        <p className="description">{truncatedDescription}</p>
                     </Col>
                 </Row>
             </Card>

@@ -1,0 +1,21 @@
+.card-container {
+    margin-bottom: 20px;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.ant-card-body {
+    padding: 0;
+}
+
+.film-title {
+    font-family: 'Inter-Regular';
+    font-size: 20px;
+    line-height: 28px;
+}
+
+.description {
+    font-family: 'Inter-Regular';
+    font-size: 12px;
+    line-height: 22px;
+}

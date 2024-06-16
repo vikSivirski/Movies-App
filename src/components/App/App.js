@@ -27,8 +27,7 @@ class App extends React.Component {
     }
 
     return (
-      <div style={{ padding: 20 }}>
-        <h1>Movies</h1>
+      <div className='container'>
         <MoviesList movies={this.state.movies} />
       </div>
     );
