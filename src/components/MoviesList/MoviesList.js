@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import MoviesListItem from "../MoviesListItem/MoviesListItem";
-import { List } from "antd"; // Импортируем List из antd
+import { List } from "antd";
 
 class MoviesList extends Component {
     render() {

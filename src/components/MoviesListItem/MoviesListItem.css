@@ -9,9 +9,20 @@
 }
 
 .film-title {
+    margin: 0;
+    margin-bottom: 7px;
     font-family: 'Inter-Regular';
     font-size: 20px;
     line-height: 28px;
+}
+
+.release-date {
+    margin: 0;
+    margin-bottom: 7px;
+    font-family: 'Inter-Regular';
+    font-size: 12px;
+    line-height: 22px;
+    color: #827E7E;
 }
 
 .description {
