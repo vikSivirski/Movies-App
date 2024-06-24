@@ -1,24 +1,35 @@
 import React from 'react';
 import './App.css';
 import MoviesList from '../MoviesList';
-import { Spin, Alert } from 'antd'; // Импортируем Spin и Alert из antd
+import { Spin, Alert, Input, Pagination } from 'antd'; // Импортируем необходимые компоненты из antd
+import debounce from 'lodash/debounce';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    const error = localStorage.getItem('error');
     this.state = {
       movies: [],
       loading: true,
-      error: null, // Добавляем состояние для ошибок
-      online: navigator.onLine, // Добавляем состояние для отслеживания сети
+      error: error ? error : null,
+      online: navigator.onLine,
+      searchQuery: '', // Добавляем состояние для строки поиска
+      currentPage: 1, // Добавляем состояние для текущей страницы
+      totalResults: 0, // Добавляем состояние для общего количества результатов
     };
+
+    this.handleSearch = debounce(this.handleSearch, 300); // Используем debounce для метода handleSearch
   }
 
   componentDidMount() {
     window.addEventListener('online', this.handleOnline);
     window.addEventListener('offline', this.handleOffline);
 
-    this.fetchMovies();
+    if (this.state.online) {
+      this.fetchMovies();
+    } else {
+      this.setState({ loading: false });
+    }
   }
 
   componentWillUnmount() {
@@ -28,48 +39,78 @@ class App extends React.Component {
 
   handleOnline = () => {
     this.setState({ online: true, error: null }, this.fetchMovies);
+    localStorage.removeItem('error');
   };
 
   handleOffline = () => {
-    this.setState({ online: false, error: 'No internet connection', loading: false });
+    const error = 'No internet connection';
+    this.setState({ online: false, error, loading: false });
+    localStorage.setItem('error', error);
   };
 
-  fetchMovies = () => {
-    if (!navigator.onLine) {
-      this.setState({
-        error: 'No internet connection',
-        loading: false,
-      });
-      return;
-    }
-
+  fetchMovies = (query = '', page = 1) => {
     this.setState({ loading: true, error: null });
 
-    this.props.filmBase
+    const endpoint = query
+      ? `https://api.themoviedb.org/3/search/movie?api_key=8490441a780d696323472e0a8e97e0ca&query=${query}&page=${page}`
+      : `https://api.themoviedb.org/3/discover/movie?api_key=8490441a780d696323472e0a8e97e0ca&page=${page}`;
+
+    fetch(endpoint)
+      .then((res) => res.json())
       .then((data) => {
-        this.setState({
-          movies: data,
-          loading: false,
-          error: null, // Сбрасываем ошибку, если данные успешно загружены
-        });
+        if (data.results) {
+          this.setState({
+            movies: data.results,
+            loading: false,
+            error: null,
+            totalResults: data.total_results,
+            currentPage: page,
+          });
+        } else {
+          this.setState({
+            movies: [],
+            loading: false,
+            error: 'No results found',
+            totalResults: 0,
+            currentPage: page,
+          });
+        }
       })
       .catch((error) => {
+        const errorMessage = error.message || 'Network error';
         this.setState({
-          error: error.message || 'Network error',
+          error: errorMessage,
           loading: false,
         });
+        localStorage.setItem('error', errorMessage);
       });
+  };
+
+  handleSearchInput = (event) => {
+    const query = event.target.value;
+    this.setState({ searchQuery: query });
+    this.handleSearch(query); // Вызываем debounce функцию
+  };
+
+  handleSearch = (query) => {
+    this.fetchMovies(query, 1);
+  };
+
+  handlePageChange = (page) => {
+    const { searchQuery } = this.state;
+    this.fetchMovies(searchQuery, page);
   };
 
   render() {
-    const { loading, error, movies } = this.state;
-
-    if (loading) {
-      return <Spin size="large" style={{ display: 'block', margin: 'auto' }} />;
-    }
+    const { loading, error, movies, totalResults, currentPage } = this.state;
 
     return (
-      <div className="container">
+      <div className='container'>
+        <Input
+          placeholder="Search for a movie..."
+          onChange={this.handleSearchInput}
+          style={{ marginBottom: 20 }}
+        />
         {error && (
           <Alert
             message="Error"
@@ -79,7 +120,22 @@ class App extends React.Component {
             style={{ marginBottom: 20 }}
           />
         )}
-        <MoviesList movies={movies} />
+        {loading ? (
+          <div className="loading-container">
+            <Spin size="large" />
+          </div>
+        ) : (
+          <>
+            <MoviesList movies={movies} />
+            <Pagination
+              current={currentPage}
+              total={totalResults}
+              pageSize={20}
+              onChange={this.handlePageChange}
+              style={{ marginTop: 20, textAlign: 'center' }}
+            />
+          </>
+        )}
       </div>
     );
   }

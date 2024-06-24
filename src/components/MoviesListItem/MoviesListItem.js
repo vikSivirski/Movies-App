@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Card, Row, Col, } from 'antd';
+import { Card, Row, Col } from 'antd';
 import 'antd/dist/antd';
-import { format } from 'date-fns'; 
+import { format, isValid, parseISO } from 'date-fns'; 
 import MovieGenres from "../MovieGenres";
 
-import './MoviesListItem.css'
+import './MoviesListItem.css';
 
 class MoviesListItem extends Component {
     truncateText = (text, maxLength) => {
@@ -18,15 +18,20 @@ class MoviesListItem extends Component {
     render() {
         const { title, posterPath, description, releaseDate } = this.props;
         const truncatedDescription = this.truncateText(description, 200);
-        const formattedDate = format(new Date(releaseDate), 'dd MMM yyyy'); 
+        
+        let formattedDate = 'Unknown release date';
+        const date = parseISO(releaseDate);
+        if (isValid(date)) {
+            formattedDate = format(date, 'dd MMM yyyy');
+        }
 
         return (
             <Card
-            hoverable
-            className="card-container"
-            style={{ marginBottom: 20, borderRadius: 0 }}
-            bodyStyle={{ padding: 0 }} 
-        >
+                hoverable
+                className="card-container"
+                style={{ marginBottom: 20, borderRadius: 0 }}
+                bodyStyle={{ padding: 0 }} 
+            >
                 <Row>
                     <Col span={8}>
                         <img 
@@ -35,10 +40,10 @@ class MoviesListItem extends Component {
                             style={{ width: '100%', borderRadius: 0 }}
                         />
                     </Col>
-                    <Col span={16} style={{ paddingLeft: 20, paddingTop: 10}}>
+                    <Col span={16} style={{ paddingLeft: 20, paddingTop: 10 }}>
                         <h2 className="film-title">{title}</h2>
                         <p className="release-date">{formattedDate}</p>
-                        <MovieGenres/>
+                        <MovieGenres />
                         <p className="description">{truncatedDescription}</p>
                     </Col>
                 </Row>
