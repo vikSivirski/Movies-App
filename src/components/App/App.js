@@ -1,15 +1,21 @@
 import React from 'react';
+import { SessionContext } from '../../context/SessionContext';
 import './App.css';
 import MoviesList from '../MoviesList';
-import { Spin, Alert, Input, Pagination } from 'antd'; // Импортируем необходимые компоненты из antd
+import { Tabs, Spin, Alert, Input, Pagination } from 'antd'; // Импортируем необходимые компоненты из antd
 import debounce from 'lodash/debounce';
 
+const { TabPane } = Tabs;
+
 class App extends React.Component {
+  static contextType = SessionContext;
+
   constructor(props) {
     super(props);
     const error = localStorage.getItem('error');
     this.state = {
       movies: [],
+      ratedMovies: [],
       loading: true,
       error: error ? error : null,
       online: navigator.onLine,
@@ -86,6 +92,44 @@ class App extends React.Component {
       });
   };
 
+  fetchRatedMovies = () => { // Добавлено: Метод для получения оцененных фильмов
+    const { guestSessionId } = this.context;
+
+    this.setState({ loading: true, error: null });
+
+    const endpoint = `https://api.themoviedb.org/3/guest_session/${guestSessionId}/rated/movies?api_key=8490441a780d696323472e0a8e97e0ca`;
+
+    fetch(endpoint)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.results) {
+          const ratedMoviesWithRatings = data.results.map((movie) => ({
+            ...movie,
+            userRating: movie.rating,
+          }));
+
+          this.setState({
+            ratedMovies: ratedMoviesWithRatings,
+            loading: false,
+            error: null,
+          });
+        } else {
+          this.setState({
+            ratedMovies: [],
+            loading: false,
+            error: 'No rated movies found',
+          });
+        }
+      })
+      .catch((error) => {
+        const errorMessage = error.message || 'Network error';
+        this.setState({
+          error: errorMessage,
+          loading: false,
+        });
+      });
+  };
+
   handleSearchInput = (event) => {
     const query = event.target.value;
     this.setState({ searchQuery: query });
@@ -102,43 +146,67 @@ class App extends React.Component {
   };
 
   render() {
-    const { loading, error, movies, totalResults, currentPage } = this.state;
+    const { loading, error, movies, ratedMovies, totalResults, currentPage } = this.state;
+    const { guestSessionId } = this.context;
 
     return (
       <div className='container'>
-        <Input
-          placeholder="Search for a movie..."
-          onChange={this.handleSearchInput}
-          style={{ marginBottom: 20 }}
-        />
-        {error && (
-          <Alert
-            message="Error"
-            description={error}
-            type="error"
-            showIcon
-            style={{ marginBottom: 20 }}
-          />
-        )}
-        {loading ? (
-          <div className="loading-container">
-            <Spin size="large" />
-          </div>
-        ) : (
-          <>
-            <MoviesList movies={movies} />
-            <Pagination
-              current={currentPage}
-              total={totalResults}
-              pageSize={20}
-              onChange={this.handlePageChange}
-              style={{ marginTop: 20, textAlign: 'center' }}
+        <p>Guest Session ID: {guestSessionId}</p>
+        <Tabs
+          defaultActiveKey="search"
+          onChange={(key) => key === 'rated' && this.fetchRatedMovies()} // Добавлено: При переключении на вкладку Rated загружаем оцененные фильмы
+        >
+          <TabPane tab="Search" key="search"> {/* Добавлено: Вкладка Search */}
+            <Input
+              placeholder="Search for a movie..."
+              onChange={this.handleSearchInput}
+              style={{ marginBottom: 20 }}
             />
-          </>
-        )}
+            {error && (
+              <Alert
+                message="Error"
+                description={error}
+                type="error"
+                showIcon
+                style={{ marginBottom: 20 }}
+              />
+            )}
+            {loading ? (
+              <div className="loading-container">
+                <Spin size="large" />
+              </div>
+            ) : (
+              <>
+                <MoviesList 
+                  movies={movies}
+                />
+                <Pagination
+                  current={currentPage}
+                  total={totalResults}
+                  pageSize={20}
+                  onChange={this.handlePageChange}
+                  style={{ marginTop: 20, textAlign: 'center' }}
+                />
+              </>
+            )}
+          </TabPane>
+          <TabPane tab="Rated" key="rated"> {/* Добавлено: Вкладка Rated */}
+            {loading ? (
+              <div className="loading-container">
+                <Spin size="large" />
+              </div>
+            ) : (
+              <>
+                <MoviesList movies={ratedMovies} />
+              </>
+            )}
+          </TabPane>
+        </Tabs>
       </div>
     );
   }
 }
+
+App.contextType = SessionContext;
 
 export default App;

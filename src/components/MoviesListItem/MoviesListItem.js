@@ -1,12 +1,49 @@
 import React, { Component } from "react";
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col, Rate } from 'antd';
 import 'antd/dist/antd';
 import { format, isValid, parseISO } from 'date-fns'; 
 import MovieGenres from "../MovieGenres";
+import { SessionContext } from '../../context/SessionContext';
 
 import './MoviesListItem.css';
 
 class MoviesListItem extends Component {
+    static contextType = SessionContext;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            rating: this.props.userRating || 0, // Начальное значение рейтинга
+        };
+    }
+
+    handleRateChange = (value) => {
+        const { movieId } = this.props;
+        const { guestSessionId } = this.context;
+
+        this.setState({ rating: value });
+
+        // Делаем запрос к TMDB для сохранения рейтинга
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}/rating?api_key=8490441a780d696323472e0a8e97e0ca&guest_session_id=${guestSessionId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ value }), // Рейтинг в теле запроса
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                console.log('Rating submitted successfully:', data);
+            } else {
+                console.error('Error submitting rating:', data);
+            }
+        })
+        .catch((error) => {
+            console.error('Error during rating submission:', error);
+        });
+    };
+
     truncateText = (text, maxLength) => {
         if (text.length <= maxLength) return text;
         const truncatedText = text.substring(0, maxLength);
@@ -24,6 +61,8 @@ class MoviesListItem extends Component {
         if (isValid(date)) {
             formattedDate = format(date, 'dd MMM yyyy');
         }
+
+        const { rating } = this.state;
 
         return (
             <Card
@@ -45,6 +84,12 @@ class MoviesListItem extends Component {
                         <p className="release-date">{formattedDate}</p>
                         <MovieGenres />
                         <p className="description">{truncatedDescription}</p>
+                        <Rate 
+                            value={rating} 
+                            onChange={this.handleRateChange} 
+                            count={10}
+                            style={{ marginTop: 10 }} 
+                        />
                     </Col>
                 </Row>
             </Card>

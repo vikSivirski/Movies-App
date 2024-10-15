@@ -13,10 +13,12 @@ class MoviesList extends Component {
                     <List.Item>
                         <MoviesListItem
                             key={movie.id}
+                            movieId={movie.id}
                             title={movie.title}
                             posterPath={movie.poster_path}
                             description={movie.overview}
                             releaseDate={movie.release_date}
+                            userRating={movie.userRating}
                         />
                     </List.Item>
                 )}
