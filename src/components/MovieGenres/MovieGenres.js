@@ -5,13 +5,13 @@ import './MovieGenres.css';
 
 class MovieGenres extends Component {
   render() {
-    const genres = ['Action', 'Drama'];
+    const { genres } = this.props; // Получаем жанры из пропсов
 
     return (
       <div className="genres-container">
-        {genres.map((genre, index) => (
-          <Tag key={index} className="genre-tag">
-            {genre}
+        {genres.map((genre) => (
+          <Tag key={genre.id} className="genre-tag">
+            {genre.name} {/* Используем название жанра */}
           </Tag>
         ))}
       </div>

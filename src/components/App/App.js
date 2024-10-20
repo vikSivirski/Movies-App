@@ -19,12 +19,12 @@ class App extends React.Component {
       loading: true,
       error: error ? error : null,
       online: navigator.onLine,
-      searchQuery: '', // Добавляем состояние для строки поиска
-      currentPage: 1, // Добавляем состояние для текущей страницы
-      totalResults: 0, // Добавляем состояние для общего количества результатов
+      searchQuery: '', 
+      currentPage: 1, 
+      totalResults: 0, 
     };
 
-    this.handleSearch = debounce(this.handleSearch, 300); // Используем debounce для метода handleSearch
+    this.handleSearch = debounce(this.handleSearch, 300); 
   }
 
   componentDidMount() {
@@ -92,7 +92,7 @@ class App extends React.Component {
       });
   };
 
-  fetchRatedMovies = () => { // Добавлено: Метод для получения оцененных фильмов
+  fetchRatedMovies = () => {
     const { guestSessionId } = this.context;
 
     this.setState({ loading: true, error: null });

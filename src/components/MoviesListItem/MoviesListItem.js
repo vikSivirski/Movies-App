@@ -3,6 +3,7 @@ import { Card, Row, Col, Rate } from 'antd';
 import 'antd/dist/antd';
 import { format, isValid, parseISO } from 'date-fns'; 
 import MovieGenres from "../MovieGenres";
+import RatingCircle from "../RatingCircle/RatingCircle";
 import { SessionContext } from '../../context/SessionContext';
 
 import './MoviesListItem.css';
@@ -14,8 +15,28 @@ class MoviesListItem extends Component {
         super(props);
         this.state = {
             rating: this.props.userRating || 0, // Начальное значение рейтинга
+            genres: [],
         };
     }
+
+    componentDidMount() {
+        this.fetchMovieGenres();
+    }
+
+    fetchMovieGenres = async () => {
+        const { movieId } = this.props;
+        const apiKey = '8490441a780d696323472e0a8e97e0ca';
+
+        try {
+            const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+            const data = await response.json();
+            if (data.genres) {
+                this.setState({ genres: data.genres }); // Сохраняем жанры в состоянии
+            }
+        } catch (error) {
+            console.error('Error fetching movie genres:', error);
+        }
+    };
 
     handleRateChange = (value) => {
         const { movieId } = this.props;
@@ -62,7 +83,7 @@ class MoviesListItem extends Component {
             formattedDate = format(date, 'dd MMM yyyy');
         }
 
-        const { rating } = this.state;
+        const { rating, genres } = this.state;
 
         return (
             <Card
@@ -82,7 +103,7 @@ class MoviesListItem extends Component {
                     <Col span={16} style={{ paddingLeft: 20, paddingTop: 10 }}>
                         <h2 className="film-title">{title}</h2>
                         <p className="release-date">{formattedDate}</p>
-                        <MovieGenres />
+                        <MovieGenres genres={genres} />
                         <p className="description">{truncatedDescription}</p>
                         <Rate 
                             value={rating} 
@@ -92,6 +113,7 @@ class MoviesListItem extends Component {
                         />
                     </Col>
                 </Row>
+                <RatingCircle rating={rating} />
             </Card>
         );
     }
