@@ -1,33 +1,33 @@
 .card-container {
-    min-height: 247px;
-    margin-bottom: 20px;
-    border-radius: 0;
-    overflow: hidden;
+  min-height: 247px;
+  margin-bottom: 20px;
+  border-radius: 0;
+  overflow: hidden;
 }
 
 .ant-card-body {
-    padding: 0;
+  padding: 0;
 }
 
 .film-title {
-    margin: 0;
-    margin-bottom: 7px;
-    font-family: 'Inter-Regular';
-    font-size: 20px;
-    line-height: 28px;
+  margin: 0;
+  margin-bottom: 7px;
+  font-family: "Inter-Regular";
+  font-size: 20px;
+  line-height: 28px;
 }
 
 .release-date {
-    margin: 0;
-    margin-bottom: 7px;
-    font-family: 'Inter-Regular';
-    font-size: 12px;
-    line-height: 22px;
-    color: #827E7E;
+  margin: 0;
+  margin-bottom: 7px;
+  font-family: "Inter-Regular";
+  font-size: 12px;
+  line-height: 22px;
+  color: #827e7e;
 }
 
 .description {
-    font-family: 'Inter-Regular';
-    font-size: 12px;
-    line-height: 22px;
+  font-family: "Inter-Regular";
+  font-size: 12px;
+  line-height: 22px;
 }

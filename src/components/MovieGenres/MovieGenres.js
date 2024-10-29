@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Tag } from 'antd';
-import 'antd/dist/antd';
-import './MovieGenres.css';
+import React, { Component } from "react";
+import { Tag } from "antd";
+import "antd/dist/antd";
+import "./MovieGenres.css";
 
 class MovieGenres extends Component {
   render() {

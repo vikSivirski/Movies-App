@@ -34,6 +34,15 @@
   color: #61dafb;
 }
 
+.centered-tabs {
+  display: flex;
+  justify-content: center;
+}
+
+.centered-tabs .ant-tabs-nav {
+  margin: 20px auto; /* Центрируем навигацию по вкладкам */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
